@@ -6,19 +6,20 @@ import {
   TextField,
   Button,
   Paper,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
 } from '@material-ui/core';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import { makeStyles } from '@material-ui/core/styles';
 import DateFnsUtils from '@date-io/date-fns';
-
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import PropertyDataTable from '../../Components/PropertyDataTable';
+import { useForm, Controller } from 'react-hook-form';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 30,
   },
   paper: {
-    padding: 10,
-    paddingBottom: 20,
+    padding: 20,
     marginTop: 10,
+    paddingBottom: 30,
   },
   control: {
     padding: theme.spacing(2),
@@ -45,75 +46,181 @@ const useStyles = makeStyles((theme) => ({
 const Property = () => {
   const classes = useStyles();
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data, e) => console.log(data, e);
+
   return (
     <Box className={classes.root}>
-      <Typography variant="h4" component="h4" gutterBottom>
-        Add a New Property
-      </Typography>
       <Box mt={4}>
-        <Paper className={classes.paper}>
-          <Grid container className={classes.container} spacing={4}>
-            <Grid item xs={12} md={4}>
-              <FormControl className={classes.formControl}>
-                <TextField id="propertyName" label="Name" />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value=""
-                  onChange={() => {}}
-                >
-                  <MenuItem value={10}>Condo</MenuItem>
-                  <MenuItem value={20}>Single Family</MenuItem>
-                  <MenuItem value={30}>Townhouse</MenuItem>
-                  <MenuItem value={30}>Apartment Building</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl className={classes.formControl}>
-                <TextField id="standard-basic" label="Address" />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <FormControl className={classes.formControl}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardDatePicker
-                    disableToolbar
-                    format="MM/dd/yyyy"
-                    id="date-picker-inline"
-                    label="Purchase Date"
-                    value={new Date('2014-08-18T21:11:54')}
-                    onChange={() => {}}
-                    KeyboardButtonProps={{
-                      'aria-label': 'change date',
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Paper className={classes.paper}>
+            <Typography variant="h5" component="h5" gutterBottom>
+              Add a New Property
+            </Typography>
+            <Grid container className={classes.container} spacing={4}>
+              <Grid item xs={12} md={4}>
+                <FormControl className={classes.formControl}>
+                  <Controller
+                    name="propertyName"
+                    control={control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'This field is required.',
+                      },
                     }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        id="propertyName"
+                        label="Name"
+                        error={!!errors.propertyName}
+                        helperText={errors.propertyName?.message}
+                      />
+                    )}
                   />
-                </MuiPickersUtilsProvider>
-              </FormControl>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <FormControl
+                  className={classes.formControl}
+                  error={!!errors.propertyType}
+                >
+                  <Controller
+                    name="propertyType"
+                    control={control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'This field is required.',
+                      },
+                    }}
+                    render={({ field }) => (
+                      <>
+                        <InputLabel id="propertyTypeLabel">Type</InputLabel>
+                        <Select
+                          {...field}
+                          labelId="propertyTypeLabel"
+                          id="propertyType"
+                          error={!!errors.propertyType}
+                        >
+                          <MenuItem value="condo">Condo</MenuItem>
+                          <MenuItem value="singleFamily">
+                            Single Family
+                          </MenuItem>
+                          <MenuItem value="townhouse">Townhouse</MenuItem>
+                          <MenuItem value="apartment">
+                            Apartment Building
+                          </MenuItem>
+                        </Select>
+                        {errors.propertyType && (
+                          <FormHelperText>
+                            {errors.propertyType?.message}
+                          </FormHelperText>
+                        )}
+                      </>
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <FormControl className={classes.formControl}>
+                  <Controller
+                    name="propertyAddress"
+                    control={control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'This field is required',
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        id="propertyAddress"
+                        label="Address"
+                        error={!!errors.propertyAddress}
+                        helperText={errors.propertyAddress?.message}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <FormControl className={classes.formControl}>
-                <TextField id="standard-basic" label="Number of Tenants" />
-              </FormControl>
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={4}>
+                <FormControl className={classes.formControl}>
+                  <Controller
+                    name="propertyPurchaseDate"
+                    control={control}
+                    defaultValue={new Date()}
+                    rules={{ required: true }}
+                    render={({ field }) => (
+                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                          {...field}
+                          disableToolbar
+                          format="MM/dd/yyyy"
+                          id="propertyPurchaseDate"
+                          label="Purchase Date"
+                          KeyboardButtonProps={{
+                            'aria-label': 'change purchase date',
+                          }}
+                        />
+                      </MuiPickersUtilsProvider>
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <FormControl className={classes.formControl}>
+                  <Controller
+                    name="propertyNumberOfTenants"
+                    control={control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: 'This field is required.',
+                      },
+                      pattern: {
+                        value: /\d+/,
+                        message: 'Please enter numeric value.',
+                      },
+                    }}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        id="propertyNumberOfTenants"
+                        label="Number of Tenants"
+                        error={!!errors.propertyNumberOfTenants}
+                        helperText={errors.propertyNumberOfTenants?.message}
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Box mt={2}>
-                <Button variant="contained" color="primary" size="large">
-                  Add Property
-                </Button>
-              </Box>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <Box mt={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    type="submit"
+                  >
+                    Add Property
+                  </Button>
+                </Box>
+              </Grid>
             </Grid>
-          </Grid>
-        </Paper>
+          </Paper>
+        </form>
       </Box>
 
       <Box mt={4}>
