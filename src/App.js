@@ -1,9 +1,12 @@
 import Main from './Layout';
+import Property from './Pages/Property';
 
 function App() {
   return (
     <div className="App">
-      <Main />
+      <Main>
+        <Property />
+      </Main>
     </div>
   );
 }
