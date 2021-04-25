@@ -18,6 +18,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import PropertyDataTable from '../../Components/PropertyDataTable';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +46,7 @@ const Property = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <Typography variant="h4" component="h4" gutterBottom>
         Add a New Property
       </Typography>
@@ -54,9 +55,12 @@ const Property = () => {
           <Grid container className={classes.container} spacing={4}>
             <Grid item xs={12} md={4}>
               <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">
-                  Property Type
-                </InputLabel>
+                <TextField id="propertyName" label="Name" />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="demo-simple-select-label">Type</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -75,6 +79,8 @@ const Property = () => {
                 <TextField id="standard-basic" label="Address" />
               </FormControl>
             </Grid>
+          </Grid>
+          <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
               <FormControl className={classes.formControl}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -92,15 +98,30 @@ const Property = () => {
                 </MuiPickersUtilsProvider>
               </FormControl>
             </Grid>
+            <Grid item xs={12} md={4}>
+              <FormControl className={classes.formControl}>
+                <TextField id="standard-basic" label="Number of Tenants" />
+              </FormControl>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" size="large">
-              Add Property
-            </Button>
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Box mt={2}>
+                <Button variant="contained" color="primary" size="large">
+                  Add Property
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
         </Paper>
       </Box>
-    </div>
+
+      <Box mt={4}>
+        <Typography variant="h5" component="h5" gutterBottom>
+          <PropertyDataTable />
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 

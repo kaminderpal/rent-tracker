@@ -47,7 +47,7 @@ export default function Main({ children }) {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            Clipped drawer
+            Tracker
           </Typography>
         </Toolbar>
       </AppBar>
